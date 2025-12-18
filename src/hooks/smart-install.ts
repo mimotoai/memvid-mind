@@ -6,7 +6,7 @@
  * Runs on SessionStart before other hooks.
  */
 
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { execSync } from "node:child_process";
 import { writeOutput, debug } from "../utils/helpers.js";
