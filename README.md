@@ -33,11 +33,18 @@ Claude: "I'd be happy to help you debug it from scratch!"
 
 ## Installation
 
+**Step 1:** One-time setup (if you haven't used GitHub plugins before)
 ```bash
-claude plugin install memvid-mind
+git config --global url."https://github.com/".insteadOf "git@github.com:"
 ```
 
-That's it. No config needed.
+**Step 2:** Add marketplace and install
+```
+/plugin marketplace add memvid/memvid-mind
+/plugin install memvid-mind
+```
+
+**Step 3:** Restart Claude Code. Done!
 
 ---
 
