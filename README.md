@@ -83,12 +83,32 @@ That's it. No database. No cloud. No API keys.
 
 ## Commands
 
+**In Claude Code:**
 ```bash
 /mind:mind search "auth bug"      # find past context
 /mind:mind ask "why JWT?"         # query memory
 /mind:mind recent                 # latest memories
 /mind:mind stats                  # usage stats
 ```
+
+<br />
+
+## CLI (Optional)
+
+For power users who want direct access to their memory file:
+
+```bash
+npm install -g memvid-cli
+```
+
+```bash
+memvid stats .claude/mind.mv2           # view memory stats
+memvid find .claude/mind.mv2 "auth"     # search memories
+memvid ask .claude/mind.mv2 "why JWT?"  # ask questions
+memvid timeline .claude/mind.mv2        # view timeline
+```
+
+[Full CLI reference →](https://docs.memvid.com/cli/cheat-sheet)
 
 <br />
 

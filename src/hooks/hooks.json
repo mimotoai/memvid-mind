@@ -7,12 +7,12 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/dist/hooks/smart-install.js\"",
-            "timeout": 120
+            "timeout": 30
           },
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/dist/hooks/session-start.js\"",
-            "timeout": 15
+            "timeout": 5
           }
         ]
       }
@@ -24,7 +24,7 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/dist/hooks/post-tool-use.js\"",
-            "timeout": 120
+            "timeout": 10
           }
         ]
       }
@@ -35,7 +35,7 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/dist/hooks/stop.js\"",
-            "timeout": 30
+            "timeout": 10
           }
         ]
       }

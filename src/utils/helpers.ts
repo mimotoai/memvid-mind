@@ -72,10 +72,12 @@ export async function readStdin(): Promise<string> {
 }
 
 /**
- * Write JSON to stdout and exit
+ * Write JSON to stdout and exit immediately
+ * (Prevents SDK background tasks from blocking process exit)
  */
-export function writeOutput(output: unknown): void {
+export function writeOutput(output: unknown): never {
   console.log(JSON.stringify(output));
+  process.exit(0);
 }
 
 /**

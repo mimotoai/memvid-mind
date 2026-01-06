@@ -6,6 +6,7 @@ import 'crypto';
 
 function writeOutput(output) {
   console.log(JSON.stringify(output));
+  process.exit(0);
 }
 function debug(message) {
   if (process.env.MEMVID_MIND_DEBUG === "1") {

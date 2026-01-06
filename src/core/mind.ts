@@ -84,9 +84,46 @@ export class Mind {
     await mkdir(memoryDir, { recursive: true });
 
     // Open or create the memvid file
-    const memvid = existsSync(memoryPath)
-      ? await use("basic", memoryPath)
-      : await create(memoryPath, "basic");
+    let memvid;
+    const MAX_FILE_SIZE_MB = 100; // Files over 100MB are likely corrupted
+
+    if (!existsSync(memoryPath)) {
+      memvid = await create(memoryPath, "basic");
+    } else {
+      // Check file size - very large files are likely corrupted and will hang
+      const { statSync, renameSync, unlinkSync } = await import("node:fs");
+      const fileSize = statSync(memoryPath).size;
+      const fileSizeMB = fileSize / (1024 * 1024);
+
+      if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        console.error(`[memvid-mind] Memory file too large (${fileSizeMB.toFixed(1)}MB), likely corrupted. Creating fresh memory...`);
+        const backupPath = `${memoryPath}.backup-${Date.now()}`;
+        try { renameSync(memoryPath, backupPath); } catch { /* ignore */ }
+        memvid = await create(memoryPath, "basic");
+      } else {
+        try {
+          memvid = await use("basic", memoryPath);
+        } catch (openError: unknown) {
+          const errorMessage = openError instanceof Error ? openError.message : String(openError);
+          // Handle corrupted or incompatible memory files
+          if (errorMessage.includes("Deserialization") ||
+              errorMessage.includes("UnexpectedVariant") ||
+              errorMessage.includes("Invalid") ||
+              errorMessage.includes("corrupt")) {
+            console.error("[memvid-mind] Memory file corrupted, creating fresh memory...");
+            const backupPath = `${memoryPath}.backup-${Date.now()}`;
+            try {
+              renameSync(memoryPath, backupPath);
+            } catch {
+              try { unlinkSync(memoryPath); } catch { /* ignore */ }
+            }
+            memvid = await create(memoryPath, "basic");
+          } else {
+            throw openError;
+          }
+        }
+      }
+    }
 
     const mind = new Mind(memvid, config);
     mind.initialized = true;
@@ -144,10 +181,10 @@ export class Mind {
   }
 
   /**
-   * Search memories by query
+   * Search memories by query (uses fast lexical search)
    */
   async search(query: string, limit = 10): Promise<MemorySearchResult[]> {
-    const results = await this.memvid.find(query, { k: limit });
+    const results = await this.memvid.find(query, { k: limit, mode: "lex" });
 
     return (results.frames || []).map((frame: any) => ({
       observation: {
@@ -165,10 +202,10 @@ export class Mind {
   }
 
   /**
-   * Ask the memory a question (with LLM-generated answer)
+   * Ask the memory a question (uses fast lexical search)
    */
   async ask(question: string): Promise<string> {
-    const result = await this.memvid.ask(question, { k: 5 });
+    const result = await this.memvid.ask(question, { k: 5, mode: "lex" });
     return result.answer || "No relevant memories found.";
   }
 

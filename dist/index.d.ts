@@ -138,11 +138,11 @@ declare class Mind {
         metadata?: Record<string, unknown>;
     }): Promise<string>;
     /**
-     * Search memories by query
+     * Search memories by query (uses fast lexical search)
      */
     search(query: string, limit?: number): Promise<MemorySearchResult[]>;
     /**
-     * Ask the memory a question (with LLM-generated answer)
+     * Ask the memory a question (uses fast lexical search)
      */
     ask(question: string): Promise<string>;
     /**
@@ -212,9 +212,10 @@ declare function safeJsonParse<T>(text: string, fallback: T): T;
  */
 declare function readStdin(): Promise<string>;
 /**
- * Write JSON to stdout and exit
+ * Write JSON to stdout and exit immediately
+ * (Prevents SDK background tasks from blocking process exit)
  */
-declare function writeOutput(output: unknown): void;
+declare function writeOutput(output: unknown): never;
 /**
  * Log debug message to stderr
  */
